@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:myapp/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../config/constants.dart';
 import '../config/palette.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,35 +22,92 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? userData;
 
   //Skills List
-  final List<Map<String, dynamic>> skills = [
-    {'name': 'Flutter / Dart', 'level': 0.90, 'icon': '📱'},
-    {'name': 'Firebase', 'level': 0.80, 'icon': '🔥'},
-    {'name': 'REST APIs', 'level': 0.85, 'icon': '🌐'},
-    {'name': 'Git & GitHub', 'level': 0.88, 'icon': '🔧'},
-    {'name': 'UI/UX Design', 'level': 0.75, 'icon': '🎨'},
-    {'name': 'State Management', 'level': 0.82, 'icon': '⚙️'},
+  final List<Map<String, dynamic>> skillCategories = [
+    {
+      'category': '🧠 Programming Languages',
+      'skills': [
+        {'name': 'C', 'logo': 'assets/images/letter-c.png'},
+        {'name': 'C++', 'logo': 'assets/images/c-.png'},
+        {'name': 'Java', 'logo': 'assets/images/java.png'},
+        {'name': 'JavaScript', 'logo': 'assets/images/js.png'},
+        {'name': 'Dart', 'logo': 'assets/images/dart.png'},
+        {'name': 'Kotlin', 'logo': 'assets/images/kotlin.jpeg'},
+        {'name': 'Python', 'logo': 'assets/images/python.png'},
+      ],
+    },
+    {
+      'category': '📱 App Development',
+      'skills': [
+        {'name': 'Flutter', 'logo': 'assets/images/flutter.jpg'},
+        {'name': 'Dart', 'logo': 'assets/images/dart.png'},
+        {'name': 'Android Studio', 'logo': 'assets/images/android.png'},
+        {'name': 'Kotlin', 'logo': 'assets/images/kotlin.jpeg'},
+        {'name': 'Jetpack Compose', 'logo': 'assets/images/Jetpack compose.png'},
+      ],
+    },
+    {
+      'category': '🌐 Web Development',
+      'skills': [
+        {'name': 'HTML5', 'logo': 'assets/images/html-5.png'},
+        {'name': 'CSS3', 'logo': 'assets/images/css.png'},
+        {'name': 'JavaScript', 'logo': 'assets/images/js.png'},
+        {'name': 'Node.js', 'logo': 'assets/images/nodejs.png'},
+      ],
+    },
+    {
+      'category': '🛠 Tools & Platforms',
+      'skills': [
+        {'name': 'Git', 'logo': 'assets/images/social.png'},
+        {'name': 'GitHub', 'logo': 'assets/images/social(1).png'},
+        {'name': 'Linux', 'logo': 'assets/images/linux.png'},
+        {'name': 'AI Dev', 'logo': 'assets/images/bot.png'},
+      ],
+    },
+    {
+      'category': '🎨 Design & Editing',
+      'skills': [
+        {'name': 'Canva', 'logo': 'assets/images/canva.jpeg'},
+        {'name': 'Filmora', 'logo': 'assets/images/fil ora.png'},
+      ],
+    },
+    {
+      'category': '📂 Office & Productivity',
+      'skills': [
+        {'name': 'Word', 'logo': 'assets/images/word.png'},
+        {'name': 'PowerPoint', 'logo': 'assets/images/powerpoint.png'},
+      ],
+    },
+    {
+      'category': '⚡ Extra Skills',
+      'skills': [
+        {'name': 'Gaming', 'logo': 'assets/images/social(2).png'},
+      ],
+    },
   ];
 
-  // ─── Projects List ───
+  //Projects List
   final List<Map<String, String>> projects = [
     {
       'title': 'Portfolio App',
-      'description': 'Flutter portfolio app with theme switching and GitHub API.',
-      'url': 'https://github.com/ars2k03/portfolio',
+      'description':
+      'A modern Flutter portfolio app with dynamic theme switching, smooth animations, and real-time GitHub API integration.',
+      'url': 'https://github.com/ars2k03/MyApp',
     },
     {
-      'title': 'Weather App',
-      'description': 'Real-time weather app with beautiful UI.',
-      'url': 'https://github.com/ars2k03/weather-app',
+      'title': 'WhatsApp Clone',
+      'description':
+      'A feature-rich WhatsApp UI clone built with Flutter, featuring local real-time chat, Hive persistence, QR scanner, and dark mode support.',
+      'url': 'https://github.com/ars2k03/WhatsApp',
     },
     {
-      'title': 'Task Manager',
-      'description': 'Task management app with local storage.',
-      'url': 'https://github.com/ars2k03/task-manager',
+      'title': 'YouTube Clone',
+      'description':
+      'A sleek Flutter YouTube search app with Lottie splash screen, dark theme UI, and in-app WebView browsing.',
+      'url': 'https://github.com/ars2k03/YouTube',
     },
   ];
 
-  // ─── API Call (তোমার existing logic) ───
+  //API Call
   @override
   void initState() {
     super.initState();
@@ -59,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> getData() async {
     try {
       final data = await http.get(
-        Uri.parse('https://api.github.com/users/${AppConstants.githubUsername}'),
+        Uri.parse('https://api.github.com/users/ars2k03'),
       );
       if (data.statusCode == 200) {
         setState(() {
@@ -80,12 +138,64 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // ─── URL Open করার function ───
-  Future<void> _openUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+  //URL Open
+  Future<void> _openUrl(String url, {String? label}) async {
+    final name = label ?? 'Link';
+
+    if (url.trim().isEmpty) {
+      _showSnackBar('⚠️ $name is not available yet', isError: true);
+      return;
     }
+
+    try {
+      final uri = Uri.parse(url);
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+      if (ok) {
+        _showSnackBar('✅ Opening $name...');
+      } else {
+        _showSnackBar('❌ Could not open $name', isError: true);
+      }
+    } catch (e) {
+      _showSnackBar('❌ Error opening $name', isError: true);
+    }
+  }
+
+  // SnackBar
+  void _showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: isError
+              ? const Color(0xFF3A1A1A)
+              : const Color(0xFF1A3A2A),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(milliseconds: 1500),
+          margin: const EdgeInsets.all(16),
+          content: Row(
+            children: [
+              Icon(
+                isError ? Icons.error_outline : Icons.check_circle,
+                color: isError ? Colors.redAccent : Colors.greenAccent,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
   }
 
   @override
@@ -106,9 +216,15 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: GestureDetector(
-              onTap: () => themeProvider.themeMode == ThemeMode.light
-                  ? themeProvider.changeTheme('Dark')
-                  : themeProvider.changeTheme('Light'),
+              onTap: () {
+                if (themeProvider.themeMode == ThemeMode.light) {
+                  themeProvider.changeTheme('Dark');
+                  _showSnackBar('🌙 Dark mode enabled');
+                } else {
+                  themeProvider.changeTheme('Light');
+                  _showSnackBar('☀️ Light mode enabled');
+                }
+              },
               child: Container(
                 width: 50,
                 height: 30,
@@ -136,17 +252,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       //Body
-      body: isLoading
-          ? _buildLoading(isDark)       // Loading দেখাও
-          : hasError
-          ? _buildError()           // Error দেখাও
-          : _buildContent(isDark),  // Main content দেখাও
+      body: isLoading ? _buildLoading(isDark) :
+      hasError ? _buildError() :
+      _buildContent(isDark),
     );
   }
 
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // LOADING - যখন data আসছে
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
   Widget _buildLoading(bool isDark) {
     return Center(
@@ -162,10 +274,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // ERROR - যখন কিছু ভুল হয়
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Widget _buildError() {
     return Center(
@@ -183,6 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 hasError = false;
               });
               getData();
+              _showSnackBar('🔄 Retrying...');
             },
             icon: const Icon(Icons.refresh),
             label: const Text('Try Again'),
@@ -192,9 +301,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // MAIN CONTENT - সব sections
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Widget _buildContent(bool isDark) {
     return SingleChildScrollView(
@@ -203,37 +309,57 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 20),
 
-          // ── 1. PROFILE SECTION ──
+          //PROFILE SECTION
           _buildProfileSection(isDark),
 
           const SizedBox(height: 30),
 
-          // ── 2. ABOUT SECTION ──
+          //ABOUT SECTION
           _buildAboutSection(isDark),
 
           const SizedBox(height: 20),
 
-          // ── 3. SKILLS SECTION ──
+          // Location card
+          _buildInfoCard(
+            isDark: isDark,
+            icon: Icons.location_on,
+            label: 'Location',
+            value: 'Rajshahi',
+          ),
+
+          const SizedBox(height: 12),
+
+          // University card
+          _buildInfoCard(
+            isDark: isDark,
+            icon: Icons.school,
+            label: 'University',
+            value: 'Rajshahi University of Engineering\n& Technology (RUET)',
+          ),
+
+          const SizedBox(height: 20),
+
+          //SKILLS SECTION
           _buildSkillsSection(isDark),
 
           const SizedBox(height: 20),
 
-          // ── 4. PROJECTS SECTION ──
+          //PROJECTS SECTION
           _buildProjectsSection(isDark),
 
           const SizedBox(height: 20),
 
-          // ── 5. CONTACT SECTION ──
+          //CONTACT SECTION
           _buildContactSection(isDark),
 
           const SizedBox(height: 30),
 
           // Footer
           Text(
-            'Built with 💙 in Flutter',
+            'Built with Flutter 💙 © 2026 ars2k03. All rights reserved.',
             style: TextStyle(
               fontSize: 12,
-              color: isDark ? Colors.white38 : Colors.black38,
+              color: isDark ? Colors.white70 : Colors.black87,
             ),
           ),
 
@@ -242,10 +368,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 1. PROFILE - ছবি, নাম, bio
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Widget _buildProfileSection(bool isDark) {
     return Column(
@@ -264,8 +386,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Name
         Text(
-          userData?['name'] ?? AppConstants.name,
-          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+          userData?['name'] ?? 'Md. Arafat Rahman Sohan',
+          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
 
         const SizedBox(height: 8),
@@ -277,9 +399,9 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Palette.primary,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Text(
-            AppConstants.title,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+          child: const Text(
+            'Flutter Developer',
+            style: TextStyle(color: Colors.white, fontSize: 18),
           ),
         ),
 
@@ -287,11 +409,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Bio
         Text(
-          userData?['bio'] ?? AppConstants.aboutMe,
+          '💫 Hi 👋, I\'m A R S Arafat',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
-            color: isDark ? Colors.white60 : Colors.black54,
+            color: isDark ? Colors.white70 : Colors.black54,
           ),
         ),
 
@@ -301,39 +423,49 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildStatBox('${userData?['followers'] ?? 0}', 'Followers'),
+            GestureDetector(
+              onTap: () => _showSnackBar('👥 ${userData?['followers'] ?? 0} Followers'),
+              child: _buildStatBox('${userData?['followers'] ?? 0}', 'Followers'),
+            ),
             const SizedBox(width: 20),
-            _buildStatBox('${userData?['public_repos'] ?? 0}', 'Repos'),
+            GestureDetector(
+              onTap: () => _showSnackBar('📂 ${userData?['public_repos'] ?? 0} Public Repos'),
+              child: _buildStatBox('${userData?['public_repos'] ?? 0}', 'Repos'),
+            ),
           ],
         ),
       ],
     );
   }
 
-  // ছোট stat box
+  //stat box
   Widget _buildStatBox(String count, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: Palette.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: Colors.red),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
-          Text(count,
+          Text(
+              count,
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Palette.primary)),
-          Text(label, style: const TextStyle(fontSize: 12)),
+                  color: Palette.accent
+              )
+          ),
+          Text(
+              label,
+              style: const TextStyle(
+                  fontSize: 12
+              )
+          ),
         ],
       ),
     );
   }
-
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 2. ABOUT - আমার সম্পর্কে
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Widget _buildAboutSection(bool isDark) {
     return _buildCard(
@@ -343,42 +475,125 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _buildSectionHeader('About Me'),
           const SizedBox(height: 12),
-          Text(
-            AppConstants.aboutMe,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.6,
-              color: isDark ? Colors.white70 : Colors.black87,
+          RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.6,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+              children: [
+                const TextSpan(text: 'I love building, I love breaking, and I love learning ��🔐\n\n'),
+                const TextSpan(text: 'Email Me 👉 ✉️ '),
+                TextSpan(
+                  text: 'arafatsohan2003@gmail.com',
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.blue,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      _openUrl('mailto:arafatsohan2003@gmail.com', label: 'Email');
+                    },
+                ),
+                const TextSpan(text: ' For Collaboration/Project or Anything Else. 😊😊\n\n'),
+                const TextSpan(text: '• 🔭 I\'m currently working on: Flutter mobile app development\n'),
+                const TextSpan(text: '• 🌱 I\'m currently learning: Backend development with JavaScript (Node.js) to become a Full-Stack Flutter Developer\n'),
+                const TextSpan(text: '• 👯 I\'m looking to collaborate on: Open-source Flutter & Full-Stack projects\n'),
+                const TextSpan(text: '• 🤔 I\'m looking for help with: Real-world projects to sharpen my development skills\n'),
+                const TextSpan(text: '• 💬 Ask me about: Flutter, Dart, Mobile UI/UX & Backend fundamentals\n'),
+                const TextSpan(text: '• 📫 How to reach me: '),
+                TextSpan(
+                  text: 'arafatsohan2003@gmail.com',
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.blue,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      _openUrl('mailto:arafatsohan2003@gmail.com', label: 'Email');
+                    },
+                ),
+                const TextSpan(text: '\n'),
+                const TextSpan(text: '• 😄 Pronouns: He/Him\n'),
+                const TextSpan(text: '• ⚡ Fun fact: I love tech, and I enjoy turning ideas into real-world apps 🚀'),
+              ],
             ),
           ),
           const SizedBox(height: 16),
 
-          // Location
-          Row(
-            children: [
-              const Icon(Icons.location_on, size: 18, color: Palette.primary),
-              const SizedBox(width: 8),
-              Text(userData?['location'] ?? 'Earth 🌍'),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          // Company
-          Row(
-            children: [
-              const Icon(Icons.work, size: 18, color: Palette.primary),
-              const SizedBox(width: 8),
-              Text(userData?['company'] ?? 'Open to opportunities'),
-            ],
-          ),
         ],
       ),
     );
   }
 
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 3. SKILLS - দক্ষতা
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _buildInfoCard({
+    required bool isDark,
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return GestureDetector(
+      onTap: () => _showSnackBar('📌 $label: $value'),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white10 : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? Colors.white12 : Colors.grey.shade200,
+          ),
+          boxShadow: [
+            if (!isDark)
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+          ],
+        ),
+        child: Column(
+          children: [
+            //Icon
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Palette.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 28, color: Palette.primary),
+            ),
+
+            const SizedBox(height: 10),
+
+            // Label
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? Colors.white54 : Colors.black38,
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            //Data
+            Text(
+              value,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildSkillsSection(bool isDark) {
     return _buildCard(
@@ -389,45 +604,44 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildSectionHeader('Skills'),
           const SizedBox(height: 12),
 
-          // প্রতিটা skill এর জন্য একটা bar
-          ...skills.map((skill) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Skill name + percentage
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${skill['icon']}  ${skill['name']}',
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        '${(skill['level'] * 100).toInt()}%',
-                        style: const TextStyle(
-                          color: Palette.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
+          ...skillCategories.map((category) {
+            final List<Map<String, dynamic>> skills =
+            (category['skills'] as List).cast<Map<String, dynamic>>();
 
-                  // Progress bar
-                  LinearProgressIndicator(
-                    value: skill['level'] as double,
-                    backgroundColor: isDark
-                        ? Colors.white12
-                        : Colors.grey.shade200,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+
+                // Category Header
+                Text(
+                  category['category'] as String,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
                     color: Palette.primary,
-                    minHeight: 6,
-                    borderRadius: BorderRadius.circular(3),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 10),
+                Divider(
+                  color: isDark ? Colors.white12 : Colors.grey.shade200,
+                  height: 1,
+                ),
+                const SizedBox(height: 12),
+
+                // Skill Cards Grid
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: skills.map((skill) {
+                    return _buildSkillCard(
+                      isDark: isDark,
+                      name: skill['name'] as String,
+                      logoUrl: skill['logo'] as String,
+                    );
+                  }).toList(),
+                ),
+              ],
             );
           }),
         ],
@@ -435,9 +649,52 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 4. PROJECTS - প্রজেক্টস
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _buildSkillCard({
+    required bool isDark,
+    required String name,
+    required String logoUrl,
+  }) {
+    return GestureDetector(
+      onTap: () => _showSnackBar('🛠 $name'),
+      child: Container(
+        width: 110,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? Colors.white12 : Colors.grey.shade300,
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              logoUrl,
+              width: 40,
+              height: 40,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.code, size: 40);
+              },
+            ),
+            const SizedBox(height: 8),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildProjectsSection(bool isDark) {
     return Column(
@@ -448,7 +705,6 @@ class _HomeScreenState extends State<HomeScreen> {
           child: _buildSectionHeader('Projects'),
         ),
 
-        // প্রতিটা project এর জন্য একটা card
         ...projects.map((project) {
           return _buildCard(
             isDark: isDark,
@@ -471,7 +727,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () => _openUrl(project['url']!),
+                      onPressed: () => _openUrl(
+                        project['url']!,
+                        label: project['title']!,
+                      ),
                       icon: const Icon(Icons.open_in_new, size: 20),
                     ),
                   ],
@@ -492,10 +751,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 5. CONTACT - যোগাযোগ
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
   Widget _buildContactSection(bool isDark) {
     return _buildCard(
       isDark: isDark,
@@ -507,28 +762,69 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Email
           ListTile(
-            leading: const Icon(Icons.email, color: Palette.primary),
-            title: const Text('Email Me'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => _openUrl('mailto:${AppConstants.email}'),
+            leading: const Icon(Icons.email, color: Palette.error),
+            title: Text('Email Me',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black
+              ),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            onTap: () => _openUrl(
+              'mailto:arafatsohan2003@gmail.com',
+              label: 'Email',
+            ),
             contentPadding: EdgeInsets.zero,
           ),
 
-          // GitHub
+          //X
           ListTile(
-            leading: const Icon(Icons.code, color: Palette.primary),
-            title: const Text('GitHub'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => _openUrl(AppConstants.githubProfile),
+            leading: const Icon(FontAwesomeIcons.xTwitter, color: Palette.error),
+            title: Text('X (Twitter)',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black
+              ),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            onTap: () => _openUrl(
+              'https://x.com/ars_2k03',
+              label: 'X (Twitter)',
+            ),
             contentPadding: EdgeInsets.zero,
           ),
 
           // LinkedIn
           ListTile(
-            leading: const Icon(Icons.link, color: Palette.primary),
-            title: const Text('LinkedIn'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => _openUrl(AppConstants.linkedIn),
+            leading: const Icon(FontAwesomeIcons.linkedinIn, color: Palette.error),
+            title: Text('LinkedIn',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black
+              ),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            onTap: () => _openUrl(
+              'https://www.linkedin.com/',
+              label: 'LinkedIn',
+            ),
+            contentPadding: EdgeInsets.zero,
+          ),
+
+          // GitHub
+          ListTile(
+            leading: const Icon(FontAwesomeIcons.github, color: Palette.error),
+            title: Text('GitHub',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black
+              ),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            onTap: () => _openUrl(
+              'https://github.com/ars2k03',
+              label: 'GitHub',
+            ),
             contentPadding: EdgeInsets.zero,
           ),
 
@@ -539,7 +835,10 @@ class _HomeScreenState extends State<HomeScreen> {
             width: double.infinity,
             height: 48,
             child: ElevatedButton.icon(
-              onPressed: () => _openUrl(AppConstants.cvUrl),
+              onPressed: () => _openUrl(
+                '',  // CV link এখনো নেই, তাই snackbar দেখাবে
+                label: 'CV Download',
+              ),
               icon: const Icon(Icons.download, color: Colors.white),
               label: const Text(
                 'Download CV',
@@ -561,11 +860,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // HELPER WIDGETS
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  // Section Header - যেমন "About Me", "Skills" ইত্যাদি
+  //About Me, Skills
   Widget _buildSectionHeader(String title) {
     return Row(
       children: [
@@ -586,7 +881,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Simple Card - প্রতিটা section এর জন্য
+  // Simple Card
   Widget _buildCard({
     required bool isDark,
     required Widget child,

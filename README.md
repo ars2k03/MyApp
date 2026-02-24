@@ -1,15 +1,15 @@
 <div align="center">
 
-  # 🚀 ARS Portfolio App
-  
+# 🚀 ARS Portfolio App
+
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![GitHub API](https://img.shields.io/badge/GitHub_API-181717?style=for-the-badge&logo=github&logoColor=white)
+![Provider](https://img.shields.io/badge/Provider-6C63FF?style=for-the-badge&logo=flutter&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**A modern, responsive Flutter portfolio application with dynamic theming, smooth animations, and real-time GitHub API integration.**
+**A modern Flutter portfolio application with dynamic theme switching, smooth animations, and a clean UI showcasing skills, projects & contact info.**
 
-[📱 Features](#-features) • [📸 Screenshots](#-screenshots) • [🛠 Tech Stack](#-tech-stack) • [🚀 Getting Started](#-getting-started) • [📁 Project Structure](#-project-structure) • [📬 Contact](#-contact)
+[✨ Features](#-features) • [📸 Screenshots](#-screenshots) • [🛠 Tech Stack](#-tech-stack) • [🚀 Getting Started](#-getting-started) • [📁 Project Structure](#-project-structure) • [📬 Contact](#-contact)
 
 </div>
 
@@ -32,14 +32,14 @@ Hi there 👋, I'm **Md. Arafat Rahman Sohan** (ARS Arafat) — a passionate Flu
 ## ✨ Features
 
 - 🌗 **Dynamic Theme Switching** — Seamless Light/Dark mode toggle with persistent state via `SharedPreferences`
-- 🔗 **Real-time GitHub API Integration** — Auto-fetches live profile data (avatar, name, followers, repos)
-- 👤 **Profile Section** — Dynamic profile picture, name, bio, follower & repo count
-- 🧠 **Skills Showcase** — Categorized skill grid with local asset logos
-- 📂 **Projects Section** — Cards linking directly to GitHub repositories
+- 👤 **Profile Section** — Profile picture with full-screen view, name, title badge, follower & repo stats
+- 🧠 **Skills Showcase** — 7 categorized skill grids with local asset logos (Programming, App Dev, Web Dev, Tools, Design, Office, Extra)
+- 📂 **Projects Section** — Project cards with descriptions linking directly to GitHub repositories
 - 📬 **Contact Section** — Email, X (Twitter), LinkedIn, GitHub quick-links + CV download button
-- 📍 **Info Cards** — Location and University details
-- 📱 **Fully Responsive** — Works great on all screen sizes
-- ⚡ **Error Handling** — Graceful loading, error, and retry states with SnackBar feedback
+- 📍 **Info Cards** — Location and University details with tap feedback
+- 🎨 **Custom Color Palette** — Consistent theming with `Palette` class (primary, accent, gradients)
+- 💬 **SnackBar Feedback** — Themed floating SnackBars for user interactions
+- 🔗 **URL Launcher** — Opens links in external browser with success/error handling
 
 ---
 
@@ -53,7 +53,7 @@ Hi there 👋, I'm **Md. Arafat Rahman Sohan** (ARS Arafat) — a passionate Flu
 
 </div>
 
-> 📌 **Note:** Rename your screenshot files to `light_mode.jpeg` and `dark_mode.jpeg`, then place them inside `assets/screenshots/` folder. GitHub does **not** support filenames with spaces.
+> 📌 **Note:** Place your screenshots as `light_mode.jpeg` and `dark_mode.jpeg` inside the `assets/screenshots/` folder.
 
 ---
 
@@ -63,11 +63,10 @@ Hi there 👋, I'm **Md. Arafat Rahman Sohan** (ARS Arafat) — a passionate Flu
 |---|---|
 | **Framework** | Flutter (Dart) |
 | **State Management** | Provider |
-| **HTTP Client** | http |
 | **Local Storage** | SharedPreferences |
-| **Icons** | FontAwesome Flutter |
+| **Icons** | FontAwesome Flutter, Cupertino Icons |
 | **URL Handling** | url_launcher |
-| **API** | GitHub REST API v3 |
+| **Fonts** | Google Fonts |
 
 ---
 
@@ -77,13 +76,21 @@ Hi there 👋, I'm **Md. Arafat Rahman Sohan** (ARS Arafat) — a passionate Flu
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^6.1.5+1
-  http: ^1.6.0
+  cupertino_icons: ^1.0.8
   url_launcher: ^6.3.2
   font_awesome_flutter: ^10.12.0
+  flutter_speed_dial: ^7.0.0
+  animated_icon: ^1.0.0
+  curved_navigation_bar: ^1.0.6
+  provider: ^6.1.5+1
   shared_preferences: ^2.5.4
+  flutter_animated_button: ^2.0.4
+  http: ^1.6.0
   google_fonts: ^8.0.2
-  cupertino_icons: ^1.0.8
+  iconify_flutter_plus: ^1.0.4
+  change_app_package_name: ^1.5.0
+  flutter_launcher_icons: ^0.14.4
+  icons_launcher: ^3.0.3
 ```
 
 ---
@@ -91,8 +98,6 @@ dependencies:
 ## 🚀 Getting Started
 
 ### ✅ Prerequisites
-
-Make sure you have the following installed:
 
 - [Flutter SDK](https://flutter.dev/docs/get-started/install)
 - Dart SDK
@@ -102,22 +107,26 @@ Make sure you have the following installed:
 ### 📥 Installation
 
 **1. Clone the repository**
+
 ```bash
 git clone https://github.com/ars2k03/MyApp.git
 cd MyApp
 ```
 
 **2. Install dependencies**
+
 ```bash
 flutter pub get
 ```
 
 **3. Run the app**
+
 ```bash
 flutter run
 ```
 
 **4. Build APK (Release)**
+
 ```bash
 flutter build apk --release
 ```
@@ -129,40 +138,20 @@ flutter build apk --release
 ```
 myapp/
 ├── lib/
-│   ├── main.dart                  # App entry point & MaterialApp setup
+│   ├── main.dart                  # App entry point, MaterialApp & theme setup
 │   ├── config/
-│   │   └── palette.dart           # Color constants & gradients
+│   │   └── palette.dart           # Color constants & gradient definitions
 │   ├── theme/
-│   │   └── theme_provider.dart    # ThemeProvider (Light/Dark/System)
+│   │   └── theme_provider.dart    # ThemeProvider (Light/Dark/System) with SharedPreferences
 │   └── screen/
-│       └── Home_Screen.dart       # Main portfolio screen
+│       ├── Home_Screen.dart       # Main portfolio screen (Profile, About, Skills, Projects, Contact)
+│       └── profile.dart           # Full-screen profile image viewer
 ├── assets/
-│   ├── images/                    # Skill logos & app assets
+│   ├── images/                    # Skill logos, profile picture & app assets
 │   └── screenshots/               # App screenshots for README
 ├── pubspec.yaml                   # Project configuration & dependencies
 └── README.md
 ```
-
----
-
-## 🌐 GitHub API Integration
-
-The app fetches live data from the **GitHub REST API**:
-
-```
-GET https://api.github.com/users/ars2k03
-```
-
-**Fields used:**
-
-| Field | Description |
-|---|---|
-| `avatar_url` | Profile picture |
-| `name` | Full name |
-| `followers` | Follower count |
-| `public_repos` | Public repository count |
-
-> ⚠️ GitHub API has a rate limit of **60 requests/hour** for unauthenticated requests.
 
 ---
 
@@ -174,16 +163,21 @@ GET https://api.github.com/users/ars2k03
 | Accent | `#00D9FF` | 🔵 Cyan |
 | Error | `#FF6B6B` | 🔴 Red |
 | Dark BG | `#0F0F1A` | ⬛ Deep Navy |
+| Dark Surface | `#1A1A2E` | ⬛ Dark Blue |
 | Light BG | `#F5F7FA` | ⬜ Soft White |
+| Light Surface | `#FFFFFF` | ⬜ White |
 
 ---
 
 ## 🗺️ Roadmap
 
-Future updates will focus on enhancing **scalability**, **performance**, and overall **user experience**.
+- [ ] 🌐 GitHub REST API integration for live profile data (avatar, followers, repos)
+- [ ] 📱 Responsive layout for tablets & web
+- [ ] 📄 In-app CV viewer
+- [ ] 🎞️ Animated page transitions
+- [ ] 🔔 Push notifications for new project updates
 
 ---
-
 
 ## 📂 Related Projects
 
@@ -225,6 +219,14 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
 
 ---

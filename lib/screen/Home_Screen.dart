@@ -1,8 +1,7 @@
-import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:myapp/screen/profile.dart';
 import 'package:myapp/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -19,9 +18,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   //Variables
   bool isLoading = true;
-  bool hasError = false;
-  Map<String, dynamic>? userData;
-
 
   //Skills List
   final List<Map<String, dynamic>> skillCategories = [
@@ -113,31 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getData();
-  }
-
-  Future<void> getData() async {
-    try {
-      final data = await http.get(
-        Uri.parse('https://api.github.com/users/ars2k03'),
-      );
-      if (data.statusCode == 200) {
-        setState(() {
-          userData = jsonDecode(data.body);
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          hasError = true;
-          isLoading = false;
-        });
-      }
-    } catch (e) {
+    Future.delayed(Duration(milliseconds: 2000),(){
       setState(() {
-        hasError = true;
         isLoading = false;
       });
-    }
+    });
   }
 
   //URL Open
@@ -234,13 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       //Body
-      body: isLoading ? _buildLoading(isDark) :
-      hasError ? _buildError() :
-      _buildContent(isDark),
+      body: isLoading ? _buildLoading(isDark) : _buildContent(isDark),
     );
   }
-
-
 
   Widget _buildLoading(bool isDark) {
     return Center(
@@ -252,32 +224,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
           const Text('Loading...'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildError() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 60, color: Colors.red),
-          const SizedBox(height: 16),
-          const Text('Something went wrong!', style: TextStyle(fontSize: 18)),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: () {
-              setState(() {
-                isLoading = true;
-                hasError = false;
-              });
-              getData();
-              _showSnackBar('🔄 Retrying...', false);
-            },
-            icon: const Icon(Icons.refresh),
-            label: const Text('Try Again'),
-          ),
         ],
       ),
     );
@@ -363,13 +309,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Profile(userData: userData),
+                    builder: (context) => Profile(),
                 )
               );
             },
             child: CircleAvatar(
               radius: 57,
-              backgroundImage: NetworkImage(userData?['avatar_url'] ?? ''),
+              backgroundImage: AssetImage("assets/images/1000001204.png"),
             ),
           ),
         ),
@@ -378,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Name
         Text(
-          userData?['name'] ?? 'Md. Arafat Rahman Sohan',
+          'Md. Arafat Rahman Sohan',
           style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
 
@@ -416,13 +362,13 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: () => _showSnackBar('👥 ${userData?['followers'] ?? 0} Followers', false),
-              child: _buildStatBox('${userData?['followers'] ?? 0}', 'Followers'),
+              onTap: () => _showSnackBar('👥 2.5K Followers', false),
+              child: _buildStatBox('2.5K', 'Followers'),
             ),
             const SizedBox(width: 20),
             GestureDetector(
-              onTap: () => _showSnackBar('📂 ${userData?['public_repos'] ?? 0} Public Repos', false),
-              child: _buildStatBox('${userData?['public_repos'] ?? 0}', 'Repos'),
+              onTap: () => _showSnackBar('📂 4 Public Repos', false),
+              child: _buildStatBox('4', 'Repos'),
             ),
           ],
         ),

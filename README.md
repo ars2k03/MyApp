@@ -1,7 +1,7 @@
-# 🚀 ARS Portfolio App
-
 <div align="center">
 
+  # 🚀 ARS Portfolio App
+  
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![GitHub API](https://img.shields.io/badge/GitHub_API-181717?style=for-the-badge&logo=github&logoColor=white)
@@ -45,11 +45,15 @@ Hi there 👋, I'm **Md. Arafat Rahman Sohan** (ARS Arafat) — a passionate Flu
 
 ## 📸 Screenshots
 
+<div align="center">
+
 | Light Mode | Dark Mode |
 |:---:|:---:|
-| *(Add your screenshot here)* | *(Add your screenshot here)* |
+| <img src="assets/screenshots/light_mode.jpeg" width="250"/> | <img src="assets/screenshots/dark_mode.jpeg" width="250"/> |
 
-> 💡 **Tip:** You can add screenshots by placing them in `assets/screenshots/` and updating the table above.
+</div>
+
+> 📌 **Note:** Rename your screenshot files to `light_mode.jpeg` and `dark_mode.jpeg`, then place them inside `assets/screenshots/` folder. GitHub does **not** support filenames with spaces.
 
 ---
 
@@ -90,8 +94,8 @@ dependencies:
 
 Make sure you have the following installed:
 
-- [Flutter SDK](https://flutter.dev/docs/get-started/install) `^3.10.4`
-- Dart SDK `^3.10.4`
+- [Flutter SDK](https://flutter.dev/docs/get-started/install)
+- Dart SDK
 - Android Studio / VS Code
 - Android Emulator or a physical device
 
@@ -133,7 +137,8 @@ myapp/
 │   └── screen/
 │       └── Home_Screen.dart       # Main portfolio screen
 ├── assets/
-│   └── images/                    # Skill logos & app assets
+│   ├── images/                    # Skill logos & app assets
+│   └── screenshots/               # App screenshots for README
 ├── pubspec.yaml                   # Project configuration & dependencies
 └── README.md
 ```
@@ -149,10 +154,13 @@ GET https://api.github.com/users/ars2k03
 ```
 
 **Fields used:**
-- `avatar_url` — Profile picture
-- `name` — Full name
-- `followers` — Follower count
-- `public_repos` — Public repository count
+
+| Field | Description |
+|---|---|
+| `avatar_url` | Profile picture |
+| `name` | Full name |
+| `followers` | Follower count |
+| `public_repos` | Public repository count |
 
 > ⚠️ GitHub API has a rate limit of **60 requests/hour** for unauthenticated requests.
 
@@ -170,23 +178,19 @@ GET https://api.github.com/users/ars2k03
 
 ---
 
-## 🗺 Roadmap
+## 🗺️ Roadmap
 
-- [ ] Add CV download (link a real PDF)
-- [ ] Add LinkedIn profile URL
-- [ ] Add splash screen with Lottie animation
-- [ ] Add GitHub repositories list (fetched from API)
-- [ ] Add multilingual support (Bengali/English)
-- [ ] Publish to Google Play Store
+Future updates will focus on enhancing **scalability**, **performance**, and overall **user experience**.
 
 ---
+
 
 ## 📂 Related Projects
 
 | Project | Description | Repo |
 |---|---|---|
 | **WhatsApp Clone** | Flutter WhatsApp UI clone with Hive, QR Scanner & dark mode | [🔗 GitHub](https://github.com/ars2k03/WhatsApp) |
-| **YouTube Clone** | Flutter YouTube search app with Lottie & WebView | [🔗 GitHub](https://github.com/ars2k03/YouTube) |
+| **YouTube Clone** | Flutter YouTube search app with Lottie & in-app WebView | [🔗 GitHub](https://github.com/ars2k03/YouTube) |
 
 ---
 
@@ -216,7 +220,11 @@ Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software.
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 ```
 
 ---
@@ -225,6 +233,6 @@ copies of the Software.
 
 **Built with 💙 Flutter by [ars2k03](https://github.com/ars2k03)**
 
-⭐ If you found this helpful, please consider **starring** the repository!
+⭐ If you like this project, please consider **starring** the repository!
 
 </div>

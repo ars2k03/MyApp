@@ -171,11 +171,7 @@ myapp/
 
 ## 🗺️ Roadmap
 
-- [ ] 🌐 GitHub REST API integration for live profile data (avatar, followers, repos)
-- [ ] 📱 Responsive layout for tablets & web
-- [ ] 📄 In-app CV viewer
-- [ ] 🎞️ Animated page transitions
-- [ ] 🔔 Push notifications for new project updates
+Future updates will focus on enhancing **scalability**, **performance**, and overall **user experience**.
 
 ---
 

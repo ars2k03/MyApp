@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:myapp/screen/profile.dart';
 import 'package:myapp/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = true;
   bool hasError = false;
   Map<String, dynamic>? userData;
+
 
   //Skills List
   final List<Map<String, dynamic>> skillCategories = [
@@ -139,60 +141,42 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //URL Open
-  Future<void> _openUrl(String url, {String? label}) async {
+  Future<void> _openUrl(String url, String? label) async {
     final name = label ?? 'Link';
 
-    if (url.trim().isEmpty) {
-      _showSnackBar('⚠️ $name is not available yet', isError: true);
-      return;
-    }
-
     try {
-      final uri = Uri.parse(url);
-      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final link = Uri.parse(url);
+      final open = await launchUrl(link, mode: LaunchMode.externalApplication);
 
-      if (ok) {
-        _showSnackBar('✅ Opening $name...');
+      if (open) {
+        _showSnackBar('✅ Opening $name...', false);
       } else {
-        _showSnackBar('❌ Could not open $name', isError: true);
+        _showSnackBar('❌ Could not open $name', true);
       }
     } catch (e) {
-      _showSnackBar('❌ Error opening $name', isError: true);
+      _showSnackBar('❌ Error opening $name', true);
     }
   }
 
   // SnackBar
-  void _showSnackBar(String message, {bool isError = false}) {
+  void _showSnackBar(String message, bool isError) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(
         SnackBar(
-          backgroundColor: isError
-              ? const Color(0xFF3A1A1A)
-              : const Color(0xFF1A3A2A),
+          backgroundColor: isDark ? Colors.white : Colors.black,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(milliseconds: 1500),
           margin: const EdgeInsets.all(16),
-          content: Row(
-            children: [
-              Icon(
-                isError ? Icons.error_outline : Icons.check_circle,
-                color: isError ? Colors.redAccent : Colors.greenAccent,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  message,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
+          content: Text(
+            message,
+            style: TextStyle(
+              color: isDark ? Colors.black : Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       );
@@ -219,10 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 if (themeProvider.themeMode == ThemeMode.light) {
                   themeProvider.changeTheme('Dark');
-                  _showSnackBar('🌙 Dark mode enabled');
                 } else {
                   themeProvider.changeTheme('Light');
-                  _showSnackBar('☀️ Light mode enabled');
                 }
               },
               child: Container(
@@ -291,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 hasError = false;
               });
               getData();
-              _showSnackBar('🔄 Retrying...');
+              _showSnackBar('🔄 Retrying...', false);
             },
             icon: const Icon(Icons.refresh),
             label: const Text('Try Again'),
@@ -376,9 +358,19 @@ class _HomeScreenState extends State<HomeScreen> {
         CircleAvatar(
           radius: 60,
           backgroundColor: Palette.primary,
-          child: CircleAvatar(
-            radius: 57,
-            backgroundImage: NetworkImage(userData?['avatar_url'] ?? ''),
+          child: GestureDetector(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Profile(userData: userData),
+                )
+              );
+            },
+            child: CircleAvatar(
+              radius: 57,
+              backgroundImage: NetworkImage(userData?['avatar_url'] ?? ''),
+            ),
           ),
         ),
 
@@ -424,12 +416,12 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: () => _showSnackBar('👥 ${userData?['followers'] ?? 0} Followers'),
+              onTap: () => _showSnackBar('👥 ${userData?['followers'] ?? 0} Followers', false),
               child: _buildStatBox('${userData?['followers'] ?? 0}', 'Followers'),
             ),
             const SizedBox(width: 20),
             GestureDetector(
-              onTap: () => _showSnackBar('📂 ${userData?['public_repos'] ?? 0} Public Repos'),
+              onTap: () => _showSnackBar('📂 ${userData?['public_repos'] ?? 0} Public Repos', false),
               child: _buildStatBox('${userData?['public_repos'] ?? 0}', 'Repos'),
             ),
           ],
@@ -494,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      _openUrl('mailto:arafatsohan2003@gmail.com', label: 'Email');
+                      _openUrl('mailto:arafatsohan2003@gmail.com', 'Email');
                     },
                 ),
                 const TextSpan(text: ' For Collaboration/Project or Anything Else. 😊😊\n\n'),
@@ -513,7 +505,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      _openUrl('mailto:arafatsohan2003@gmail.com', label: 'Email');
+                      _openUrl('mailto:arafatsohan2003@gmail.com', 'Email');
                     },
                 ),
                 const TextSpan(text: '\n'),
@@ -536,7 +528,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String value,
   }) {
     return GestureDetector(
-      onTap: () => _showSnackBar('📌 $label: $value'),
+      onTap: () => _showSnackBar('📌 $label: $value', false),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20),
@@ -655,7 +647,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String logoUrl,
   }) {
     return GestureDetector(
-      onTap: () => _showSnackBar('🛠 $name'),
+      onTap: () => _showSnackBar('🛠 $name', false),
       child: Container(
         width: 110,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -729,7 +721,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     IconButton(
                       onPressed: () => _openUrl(
                         project['url']!,
-                        label: project['title']!,
+                        project['title']!,
                       ),
                       icon: const Icon(Icons.open_in_new, size: 20),
                     ),
@@ -772,7 +764,7 @@ class _HomeScreenState extends State<HomeScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () => _openUrl(
               'mailto:arafatsohan2003@gmail.com',
-              label: 'Email',
+              'Email',
             ),
             contentPadding: EdgeInsets.zero,
           ),
@@ -789,7 +781,7 @@ class _HomeScreenState extends State<HomeScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () => _openUrl(
               'https://x.com/ars_2k03',
-              label: 'X (Twitter)',
+              'X (Twitter)',
             ),
             contentPadding: EdgeInsets.zero,
           ),
@@ -806,7 +798,7 @@ class _HomeScreenState extends State<HomeScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () => _openUrl(
               'https://www.linkedin.com/',
-              label: 'LinkedIn',
+              'LinkedIn',
             ),
             contentPadding: EdgeInsets.zero,
           ),
@@ -823,7 +815,7 @@ class _HomeScreenState extends State<HomeScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () => _openUrl(
               'https://github.com/ars2k03',
-              label: 'GitHub',
+              'GitHub',
             ),
             contentPadding: EdgeInsets.zero,
           ),
@@ -836,8 +828,8 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 48,
             child: ElevatedButton.icon(
               onPressed: () => _openUrl(
-                '',  // CV link এখনো নেই, তাই snackbar দেখাবে
-                label: 'CV Download',
+                '',
+                'CV Download',
               ),
               icon: const Icon(Icons.download, color: Colors.white),
               label: const Text(

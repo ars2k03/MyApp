@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(milliseconds: 1500),
-          margin: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(20),
           content: Text(
             message,
             style: TextStyle(
@@ -307,10 +307,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: GestureDetector(
             onTap: (){
               Navigator.push(
-                context,
-                MaterialPageRoute(
+                  context,
+                  MaterialPageRoute(
                     builder: (context) => Profile(),
-                )
+                  )
               );
             },
             child: CircleAvatar(
